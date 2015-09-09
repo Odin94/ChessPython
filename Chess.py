@@ -2,12 +2,13 @@ import pygame
 from pygame.locals import *
 import sys
 
-from Graphics import ChessBoardAssets, screen, render_text
+from Graphics import ChessBoardAssets, screen, render_text, tile_size, offset
 from Board import Board
 from Piece import *
+from Player import Player
 
 class ChessGame:
-    def __init__(self, style="Default"):
+    def __init__(self, style="Default", player1 = "local_player", player2 = "local_player"):
         self.running = False
         self.clock = pygame.time.Clock() #to track FPS
         self.fps= 0
@@ -21,59 +22,24 @@ class ChessGame:
         self.white_pieces = []
         self.black_pieces = []
 
-        self.selected_piece = None
-
+        self.captured_pieces = []
+        
         for i in range(8):
-            self.black_pieces.append(Pawn("black", i, 6, 60, 60, ChessBoardAssets.black_pawn_surface))
-            self.white_pieces.append(Pawn("white", i, 1, 60, 60, ChessBoardAssets.white_pawn_surface))
+            self.black_pieces.append(Pawn("black", i, 6, tile_size, tile_size, ChessBoardAssets.black_pawn_surface))
+            self.white_pieces.append(Pawn("white", i, 1, tile_size, tile_size, ChessBoardAssets.white_pawn_surface))
+
+        self.turn = TURN.PLAYER_1
+        self.moves = []
+
+        if player1 == "local_player":
+            self.player1 = Player("black", self.board, self.white_pieces, self.black_pieces)
+
+        if player2 == "local_player":
+            self.player2 = Player("white", self.board, self.white_pieces, self.black_pieces)
 
         self.mainLoop()
-        
-    def handleEvents(self):
-        LEFT = 1 #REFACTOR: move mousecontrols somewhere else? At least move LEFT etc definition somewhere else..
-        MIDDLE = 2
-        RIGHT = 3
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                self.running = False
-
-            elif event.type == KEYDOWN:
-                self.keyDown(event.key)
-
-            elif event.type == KEYUP:
-                if event.key == K_ESCAPE:
-                    self.running = False
-                    sys.quit()
-                self.keyUp(event.key)
-
-            elif event.type == MOUSEBUTTONDOWN:
-               # selected_a_piece = False
-                for piece in self.black_pieces:
-                    if piece.mouse_on_piece(event.pos):
-                       # selected_a_piece = True
-                        self.selected_piece = piece
 
 
-            elif event.type == MOUSEBUTTONUP:
-                if event.button == RIGHT:
-                    try:
-                        new_place = self.board.get_tile_below_mouse(event.pos)
-                        if new_place in self.selected_piece.get_possible_moves(self.board.board):
-                            self.selected_piece.board_x = new_place[0]
-                            self.selected_piece.board_y = new_place[1]
-                    except:
-                        print("click inside the chessboard, please.")
-
-            elif event.type == MOUSEMOTION:
-                for tiles in self.board.board:
-                    for tile in tiles:
-                        if tile.mouse_on_tile(event.pos):
-                            self.board_pos_mouseover_label = render_text(str(tile.board_x+1) + " / " + str(tile.board_y+1), (100, 100, 200))
-                            break
-
-                #self.mouseMotion(event.buttons, event.pos, event.rel)
-    
     #wait until a key is pressed, then return
     def waitForKey(self):
         press=False
@@ -89,7 +55,11 @@ class ChessGame:
         
         while self.running:
             pygame.display.set_caption("FPS: %i" % self.clock.get_fps())
-            self.handleEvents()
+            
+            events = pygame.event.get()
+            self.player1.handleEvents(events, self.turn==TURN.PLAYER_1, self)
+            self.player2.handleEvents(events, self.turn==TURN.PLAYER_2, self)
+
             self.update()
             self.draw()
             pygame.display.flip()
@@ -97,6 +67,20 @@ class ChessGame:
             
     def update(self):
         self.board.update(self.white_pieces + self.black_pieces)
+        self.player1.update(self.captured_pieces)
+        self.player2.update(self.captured_pieces)
+
+        if self.turn == TURN.PLAYER_1:
+            move = self.player1.get_move()
+
+        elif self.turn == TURN.PLAYER_2:
+            move = self.player2.get_move()
+
+        if move: # if received move, execute it
+            move.execute(self.white_pieces, self.black_pieces, self.captured_pieces)
+            self.moves.append(move)
+            self.turn = (self.turn + 1) % 2
+        # wait for p1 move, execute - wait for p2 move, execute (with time limit?)
 
         
     def draw(self):
@@ -105,6 +89,30 @@ class ChessGame:
             piece.draw()
         for piece in self.white_pieces:
             piece.draw()
+
+        xoffset = 10
+        for piece in self.captured_pieces: #Refactor: move this to piece class?
+            piece.draw(xoffset)
+            xoffset += 5
+
+
+        if self.turn == TURN.PLAYER_1 and self.player1.type == "local_player" and self.player1.selected_piece:
+            screen.blit(ChessBoardAssets.selected_piece, (self.player1.selected_piece.board_x * tile_size + offset[0], self.player1.selected_piece.board_y * tile_size + offset[1])) # draw selected
+
+            for pos in self.player1.selected_piece.get_possible_moves(self.board.board): # draw possible captures & moves
+                if self.board.board[pos[0]][pos[1]].occupying_piece:
+                    screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
+                else:
+                    screen.blit(ChessBoardAssets.possible_move, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible moves
+
+        elif self.turn == TURN.PLAYER_2 and self.player2.type == "local_player" and self.player2.selected_piece:
+            screen.blit(ChessBoardAssets.selected_piece, (self.player2.selected_piece.board_x * tile_size + offset[0], self.player2.selected_piece.board_y * tile_size + offset[1]))
+
+            for pos in self.player2.selected_piece.get_possible_moves(self.board.board):
+                if self.board.board[pos[0]][pos[1]].occupying_piece:
+                    screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
+                else:
+                    screen.blit(ChessBoardAssets.possible_move, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible moves
 
         screen.blit(self.board_pos_mouseover_label, (10, 450))
 
@@ -121,3 +129,6 @@ class ChessGame:
         
     def mouseMotion(self, buttons, pos, rel):
         pass
+
+class TURN:
+    PLAYER_1, PLAYER_2 = range(2)

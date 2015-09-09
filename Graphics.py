@@ -10,6 +10,8 @@ pygame.font.init()
 font = pygame.font.SysFont("calibri",60)
 font.set_bold(True)
 
+tile_size = 60
+
 class MenueAssets:
 
 	button_surface = None
@@ -51,6 +53,18 @@ class ChessBoardAssets:
 
 		ChessBoardAssets.background = load_image(tile_path + "background.png")
 
+		ChessBoardAssets.possible_move = get_transparent_color_surface(tile_size, tile_size, (135, 230, 153), 100)
+		ChessBoardAssets.possible_capture = get_transparent_color_surface(tile_size, tile_size, (189, 69, 45), 100)
+		ChessBoardAssets.selected_piece = get_transparent_color_surface(tile_size, tile_size, (50, 50, 150), 100)
+
+		ChessBoardAssets.numbers = []
+		ChessBoardAssets.letters = []
+		letters = list("ABCDEFGH")
+		for n in range(8):
+			ChessBoardAssets.numbers.append(render_text(str(n+1)))
+			ChessBoardAssets.letters.append(render_text(letters[n]))
+
+
 
 def load_image(path):
 	surface = pygame.image.load(path).convert()
@@ -61,4 +75,9 @@ def load_image(path):
 def render_text(text, color = (0, 0, 0)):
 	return font.render(text, 1, color)
 
-
+def get_transparent_color_surface(w, h, color, alpha):
+	s = pygame.Surface((w, h))
+	s.set_alpha(alpha)
+	s.fill(color)
+	
+	return s
