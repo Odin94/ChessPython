@@ -6,9 +6,9 @@ from Graphics import ChessBoardAssets, screen, render_text, tile_size
 
 
 class Player():
-    def __init__(self, team_color, board, black_pieces, white_pieces):
+    def __init__(self, team_color, game_board, black_pieces, white_pieces):
         self.team_color = team_color
-        self.board = board
+        self.game_board = game_board
         self.black_pieces = black_pieces
         self.white_pieces = white_pieces
 
@@ -17,11 +17,11 @@ class Player():
 
         self.type = "local_player"
 
-    def move(self, board, selected_piece, mouse_pos):
+    def move(self, mouse_pos):
         try:
-            new_pos = board.get_tile_below_mouse(mouse_pos)
-            if new_pos in self.selected_piece.get_possible_moves(board.board):
-                move = Move(self.selected_piece, new_pos, board.board[new_pos[0]][new_pos[1]].occupying_piece)
+            new_pos = self.game_board.get_tile_below_mouse(mouse_pos)
+            if new_pos in self.selected_piece.get_possible_moves(self.game_board.board):
+                move = Move(self.selected_piece, new_pos, self.game_board.board[new_pos[0]][new_pos[1]].occupying_piece)
 
                 self.selected_piece = None # prevents accidental moves (and fixes being able to waste a move on captured pieces)
 
@@ -74,10 +74,10 @@ class Player():
             elif event.type == MOUSEBUTTONUP:
                 if my_turn:
                     if event.button == RIGHT:
-                        self.latest_move = self.move(chessgame.board, self.selected_piece, event.pos)
+                        self.latest_move = self.move(event.pos)
 
             elif event.type == MOUSEMOTION:
-                for tiles in chessgame.board.board:
+                for tiles in chessgame.game_board.board:
                     for tile in tiles:
                         if tile.mouse_on_tile(event.pos):
                             chessgame.board_pos_mouseover_label = render_text(str(tile.board_x+1) + " / " + str(8 - tile.board_y), (100, 100, 200))

@@ -3,7 +3,7 @@ import pygame
 from Tile import Tile
 from Graphics import ChessBoardAssets, screen, offset, tile_size
 
-class Board():
+class GameBoard():
     def __init__(self):
         self.board = [[0 for x in range(8)] for x in range(8)] 
 

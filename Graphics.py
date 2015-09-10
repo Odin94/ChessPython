@@ -7,17 +7,22 @@ screen = pygame.display.set_mode((800, 600))
 offset = (160,60)
 
 pygame.font.init()
-font = pygame.font.SysFont("calibri",60)
+font = pygame.font.SysFont("calibri", 60)
 font.set_bold(True)
 
+font_small = pygame.font.SysFont("calibri", 24)
+font_small.set_bold(True)
+
 tile_size = 60
+
+style = "Default"
 
 class MenueAssets:
 
 	button_surface = None
 	background_surface = None
 
-	def load_assets(style):
+	def load_assets():
 		menue_path = "Assets/"+style+"/Menue/"
 
 		MenueAssets.button_surface = load_image(menue_path + "button.png")
@@ -28,12 +33,16 @@ class LobbyAssets:
 
 	button_surface = None
 	background_surface = None
+	player_slot_surface = None
+	button_small_surface = None
 
-	def load_assets(style):
+	def load_assets():
 		lobby_path = "Assets/"+style+"/Lobby/"
 
 		LobbyAssets.button_surface = load_image(lobby_path + "button.png")
 		LobbyAssets.background_surface = load_image(lobby_path + "background.png")
+		LobbyAssets.button_small_surface = load_image(lobby_path + "button_small.png")
+		LobbyAssets.player_slot_surface = load_image(lobby_path + "player_slot.png")
 
 class ChessBoardAssets:
 
@@ -41,7 +50,7 @@ class ChessBoardAssets:
 	white_pawn_surface = None
 	board_surface = None
 
-	def load_assets(style):
+	def load_assets():
 		piece_path = "Assets/"+style+"/Pieces/"
 		tile_path = "Assets/"+style+"/Tiles/"
 
@@ -72,8 +81,11 @@ def load_image(path):
 
 	return surface
 
-def render_text(text, color = (0, 0, 0)):
-	return font.render(text, 1, color)
+def render_text(text, color = (0, 0, 0), font_size = 'big'):
+	if font_size == 'big':
+		return font.render(text, 1, color)
+	elif font_size == 'small':
+		return font_small.render(text, 1, color)
 
 def get_transparent_color_surface(w, h, color, alpha):
 	s = pygame.Surface((w, h))

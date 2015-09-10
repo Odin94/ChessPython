@@ -15,21 +15,15 @@ class Menue():
         self.y = window_y
         self.w = w
         self.h = h
-
-        self.path = "Assets/"+style+"/Menue/"
-
-        
-        size = (w, h)
-        
-
+                
         self.assets = {}
         self.load_assets()
 
         self.decision = Deferred("")
         self.buttons = {}
-        self.buttons["play"] = Button(screen, "PLAY", self.decision, "lobby", (100, 225, 292, 120), MenueAssets.button_surface)
-        self.buttons["options"] = Button(screen, "OPTIONS", self.decision, "options", (100, 350, 292, 120), MenueAssets.button_surface)
-        self.buttons["quit"] = Button(screen, "QUIT", self.decision, "quit", (100, 475, 292, 120), MenueAssets.button_surface)
+        self.buttons["play"] = Button("PLAY", self.decision, "lobby", (100, 225, 292, 120), MenueAssets.button_surface)
+        self.buttons["options"] = Button("OPTIONS", self.decision, "options", (100, 350, 292, 120), MenueAssets.button_surface)
+        self.buttons["quit"] = Button("QUIT", self.decision, "quit", (100, 475, 292, 120), MenueAssets.button_surface)
 
 
         
@@ -37,7 +31,7 @@ class Menue():
         while self.running:
             self.update()
             if self.decision.value == "lobby":
-                Lobby(screen)
+                Lobby()
 
             if self.decision.value == "options":
                 pass
@@ -45,6 +39,7 @@ class Menue():
             if self.decision.value == "quit":
                 self.running = False
         
+            self.decision.value = ""
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -69,19 +64,15 @@ class Menue():
 
 
     def draw(self):
-        screen.blit(self.assets["background"], (0,0))
+        screen.blit(MenueAssets.background_surface, (0,0))
 
         for btn in self.buttons:
             self.buttons[btn].draw()
 
         pygame.display.flip()
 
-    def load_assets(self, style="Default"):
-        MenueAssets.load_assets(style)
-        self.assets["background"] = pygame.image.load(self.path+'background.png').convert()
-
-        for surface in self.assets:
-            self.assets[surface].set_colorkey((0,100,100))
+    def load_assets(self):
+        MenueAssets.load_assets()
 
 
 m = Menue()

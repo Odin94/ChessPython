@@ -3,21 +3,25 @@ from pygame.locals import *
 import sys
 
 from Graphics import ChessBoardAssets, screen, render_text, tile_size, offset
-from Board import Board
+from GameBoard import GameBoard
 from Piece import *
 from Player import Player
+from AI import RandomAI
 
 class ChessGame:
-    def __init__(self, style="Default", player1 = "local_player", player2 = "local_player"):
+    def __init__(self):
+        pass
+
+    def run(self, player1 = "local_player", player2 = "local_player"):
         self.running = False
         self.clock = pygame.time.Clock() #to track FPS
         self.fps= 0
 
-        ChessBoardAssets.load_assets(style)
+        ChessBoardAssets.load_assets()
 
         self.board_pos_mouseover_label = render_text("0 / 0", (100, 100, 200))
 
-        self.board = Board()
+        self.game_board = GameBoard()
 
         self.white_pieces = []
         self.black_pieces = []
@@ -32,10 +36,14 @@ class ChessGame:
         self.moves = []
 
         if player1 == "local_player":
-            self.player1 = Player("black", self.board, self.white_pieces, self.black_pieces)
+            self.player1 = Player("black", self.game_board, self.white_pieces, self.black_pieces)
+        elif player1 == "ai_player":
+            self.player1 = RandomAI("black", self.game_board, self.white_pieces, self.black_pieces)
 
         if player2 == "local_player":
-            self.player2 = Player("white", self.board, self.white_pieces, self.black_pieces)
+            self.player2 = Player("white", self.game_board, self.white_pieces, self.black_pieces)
+        elif player2 == "ai_player":
+            self.player2 = RandomAI("white", self.game_board, self.white_pieces, self.black_pieces)
 
         self.mainLoop()
 
@@ -66,7 +74,7 @@ class ChessGame:
             self.clock.tick(self.fps)
             
     def update(self):
-        self.board.update(self.white_pieces + self.black_pieces)
+        self.game_board.update(self.white_pieces + self.black_pieces)
         self.player1.update(self.captured_pieces)
         self.player2.update(self.captured_pieces)
 
@@ -84,7 +92,7 @@ class ChessGame:
 
         
     def draw(self):
-        self.board.draw()
+        self.game_board.draw()
         for piece in self.black_pieces:
             piece.draw()
         for piece in self.white_pieces:
@@ -96,11 +104,18 @@ class ChessGame:
             xoffset += 5
 
 
+        self.draw_color_helpers()
+        
+        screen.blit(self.board_pos_mouseover_label, (10, 450))
+
+
+       
+    def draw_color_helpers(self):
         if self.turn == TURN.PLAYER_1 and self.player1.type == "local_player" and self.player1.selected_piece:
             screen.blit(ChessBoardAssets.selected_piece, (self.player1.selected_piece.board_x * tile_size + offset[0], self.player1.selected_piece.board_y * tile_size + offset[1])) # draw selected
 
-            for pos in self.player1.selected_piece.get_possible_moves(self.board.board): # draw possible captures & moves
-                if self.board.board[pos[0]][pos[1]].occupying_piece:
+            for pos in self.player1.selected_piece.get_possible_moves(self.game_board.board): # draw possible captures & moves
+                if self.game_board.board[pos[0]][pos[1]].occupying_piece:
                     screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
                 else:
                     screen.blit(ChessBoardAssets.possible_move, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible moves
@@ -108,16 +123,13 @@ class ChessGame:
         elif self.turn == TURN.PLAYER_2 and self.player2.type == "local_player" and self.player2.selected_piece:
             screen.blit(ChessBoardAssets.selected_piece, (self.player2.selected_piece.board_x * tile_size + offset[0], self.player2.selected_piece.board_y * tile_size + offset[1]))
 
-            for pos in self.player2.selected_piece.get_possible_moves(self.board.board):
-                if self.board.board[pos[0]][pos[1]].occupying_piece:
+            for pos in self.player2.selected_piece.get_possible_moves(self.game_board.board):
+                if self.game_board.board[pos[0]][pos[1]].occupying_piece:
                     screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
                 else:
                     screen.blit(ChessBoardAssets.possible_move, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible moves
 
-        screen.blit(self.board_pos_mouseover_label, (10, 450))
 
-
-        
     def keyDown(self, key):
         pass
         
