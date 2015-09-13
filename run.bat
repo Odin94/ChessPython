@@ -1,1 +1,1 @@
-python Menue.py
+python main.py

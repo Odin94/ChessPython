@@ -5,18 +5,18 @@ from Deferred import Deferred
 from Lobby import Lobby
 from Button import Button
 from Graphics import MenueAssets, screen
+from Options import Options
+from OptionsGUI import OptionsGUI
 
 #REFACTOR: maybe keyboard selection?
 #REFACTOR: graphics module for loading/preparing surfaces, animations
 
 class Menue():
-    def __init__(self, window_x=200, window_y=200, w=800, h=600, style="Default"):
+    def __init__(self, window_x=200, window_y=200, style="Default"):
+
         self.x = window_x
         self.y = window_y
-        self.w = w
-        self.h = h
                 
-        self.assets = {}
         self.load_assets()
 
         self.decision = Deferred("")
@@ -34,7 +34,7 @@ class Menue():
                 Lobby()
 
             if self.decision.value == "options":
-                pass
+                OptionsGUI()
 
             if self.decision.value == "quit":
                 self.running = False
@@ -73,6 +73,3 @@ class Menue():
 
     def load_assets(self):
         MenueAssets.load_assets()
-
-
-m = Menue()

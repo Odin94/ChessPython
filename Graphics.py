@@ -1,8 +1,9 @@
 import pygame
 from pygame.locals import *
+from Options import Options
 
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((800, 600))#(Options.window_width, Options.window_height))
 
 offset = (160,60)
 
@@ -15,7 +16,7 @@ font_small.set_bold(True)
 
 tile_size = 60
 
-style = "Default"
+style = Options.style
 
 class MenueAssets:
 
@@ -43,6 +44,23 @@ class LobbyAssets:
 		LobbyAssets.background_surface = load_image(lobby_path + "background.png")
 		LobbyAssets.button_small_surface = load_image(lobby_path + "button_small.png")
 		LobbyAssets.player_slot_surface = load_image(lobby_path + "player_slot.png")
+
+
+class OptionsAssets:
+
+	background = None
+	check = None
+	nope = None
+	button_small = None
+
+	def load_assets():
+		options_path = "Assets/"+style+"/Options/"
+
+		OptionsAssets.background= load_image(options_path + "background.png")
+		OptionsAssets.button_small_surface = load_image(options_path + "button_small.png")
+		OptionsAssets.check = load_image(options_path + "check.png")
+		OptionsAssets.nope = load_image(options_path + "nope.png")
+
 
 class ChessBoardAssets:
 

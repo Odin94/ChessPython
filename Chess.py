@@ -7,6 +7,7 @@ from GameBoard import GameBoard
 from Piece import *
 from Player import Player
 from AI import RandomAI
+from Options import Options
 
 class ChessGame:
     def __init__(self):
@@ -98,10 +99,11 @@ class ChessGame:
         for piece in self.white_pieces:
             piece.draw()
 
-        xoffset = 10
-        for piece in self.captured_pieces: #Refactor: move this to piece class?
-            piece.draw(xoffset)
-            xoffset += 5
+        if Options.show_captured_pieces: # draw captured pieces on the side of the board
+            xoffset = 10
+            for piece in self.captured_pieces: #Refactor: move this to piece class?
+                piece.draw(xoffset)
+                xoffset += 5
 
 
         self.draw_color_helpers()
@@ -112,21 +114,23 @@ class ChessGame:
        
     def draw_color_helpers(self):
         if self.turn == TURN.PLAYER_1 and self.player1.type == "local_player" and self.player1.selected_piece:
-            screen.blit(ChessBoardAssets.selected_piece, (self.player1.selected_piece.board_x * tile_size + offset[0], self.player1.selected_piece.board_y * tile_size + offset[1])) # draw selected
+            if Options.highlight_selected:
+                screen.blit(ChessBoardAssets.selected_piece, (self.player1.selected_piece.board_x * tile_size + offset[0], self.player1.selected_piece.board_y * tile_size + offset[1]))# draw selected
 
             for pos in self.player1.selected_piece.get_possible_moves(self.game_board.board): # draw possible captures & moves
-                if self.game_board.board[pos[0]][pos[1]].occupying_piece:
+                if Options.highlight_capturable and self.game_board.board[pos[0]][pos[1]].occupying_piece:
                     screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
-                else:
+                elif Options.highlight_possible_moves:
                     screen.blit(ChessBoardAssets.possible_move, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible moves
 
         elif self.turn == TURN.PLAYER_2 and self.player2.type == "local_player" and self.player2.selected_piece:
-            screen.blit(ChessBoardAssets.selected_piece, (self.player2.selected_piece.board_x * tile_size + offset[0], self.player2.selected_piece.board_y * tile_size + offset[1]))
+            if Options.highlight_selected:
+                screen.blit(ChessBoardAssets.selected_piece, (self.player2.selected_piece.board_x * tile_size + offset[0], self.player2.selected_piece.board_y * tile_size + offset[1]))
 
             for pos in self.player2.selected_piece.get_possible_moves(self.game_board.board):
-                if self.game_board.board[pos[0]][pos[1]].occupying_piece:
+                if Options.highlight_capturable and self.game_board.board[pos[0]][pos[1]].occupying_piece:
                     screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
-                else:
+                elif Options.highlight_possible_moves:
                     screen.blit(ChessBoardAssets.possible_move, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible moves
 
 
