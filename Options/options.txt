@@ -1,11 +1,11 @@
 [GAME WINDOW]
-window_height = 600
 window_width = 800
+window_height = 600
 
 [VISUALS]
-show_captured_pieces: = False
-highlight_selected = False
+highlight_possible_moves = True
+show_captured_pieces = True
+highlight_capturable = True
+highlight_selected = True
 style = Default
-highlight_possible_moves = False
-highlight_capturable = False
 

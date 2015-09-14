@@ -12,6 +12,7 @@ class Move():
         self.piece.board_y = self.new_pos[1]
 
         if self.captured_piece:
+            print("ha, gotteem")
             lost_pieces.append(self.captured_piece)
             self.captured_piece.captured = True
 

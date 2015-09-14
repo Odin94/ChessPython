@@ -29,7 +29,7 @@ class AI():
         pass
 
 
-class RandomAI(AI):
+class RandomAI(AI): # BUG: Can move pawn outside of the board (left side; probably because python accepts negative indices)
     def __init__(self, team_color, game_board, white_pieces, black_pieces):
         super().__init__(team_color, game_board, black_pieces, white_pieces)
 
@@ -41,7 +41,8 @@ class RandomAI(AI):
                 piece_number = randint(0, len(self.black_pieces)-1) # pick random black piece
                 selected_piece = self.black_pieces[piece_number]
 
-                possible_moves = selected_piece.get_possible_moves(self.game_board.board) # get possible moves for that piece
+                selected_piece.update_possible_moves(self.game_board.board)
+                possible_moves = selected_piece.possible_moves # get possible moves for that piece
                 if possible_moves: # if there are no possible moves for the piece we go back to the top of the loop
                     move_number = randint(0, len(possible_moves)-1)
                     selected_pos = possible_moves[move_number]
@@ -54,7 +55,8 @@ class RandomAI(AI):
                 piece_number = randint(0, len(self.white_pieces)-1) # pick random white piece
                 selected_piece = self.white_pieces[piece_number]
 
-                possible_moves = selected_piece.get_possible_moves(self.game_board.board) # get possible moves for that piece
+                selected_piece.update_possible_moves(self.game_board.board)
+                possible_moves = selected_piece.possible_moves # get possible moves for that piece
                 if possible_moves: # if there are no possible moves for the piece we go back to the top of the loop
                     move_number = randint(0, len(possible_moves)-1)
                     selected_pos = possible_moves[move_number]

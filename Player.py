@@ -20,7 +20,7 @@ class Player():
     def move(self, mouse_pos):
         try:
             new_pos = self.game_board.get_tile_below_mouse(mouse_pos)
-            if new_pos in self.selected_piece.get_possible_moves(self.game_board.board):
+            if new_pos in self.selected_piece.possible_moves:
                 move = Move(self.selected_piece, new_pos, self.game_board.board[new_pos[0]][new_pos[1]].occupying_piece)
 
                 self.selected_piece = None # prevents accidental moves (and fixes being able to waste a move on captured pieces)
@@ -64,12 +64,13 @@ class Player():
                     for piece in chessgame.black_pieces:
                         if piece.mouse_on_piece(event.pos):
                             self.selected_piece = piece
+                            piece.update_possible_moves(chessgame.game_board.board)
 
                 elif self.team_color == "white":
                     for piece in chessgame.white_pieces:
                         if piece.mouse_on_piece(event.pos):
                             self.selected_piece = piece
-
+                            piece.update_possible_moves(chessgame.game_board.board)
 
             elif event.type == MOUSEBUTTONUP:
                 if my_turn:

@@ -75,6 +75,12 @@ class ChessBoardAssets:
 		ChessBoardAssets.black_pawn_surface = load_image(piece_path + "Pawn_Black.png")
 		ChessBoardAssets.white_pawn_surface = load_image(piece_path + "Pawn_White.png")
 
+		ChessBoardAssets.black_rook_surface = load_image(piece_path + "Rook_Black.png")
+		ChessBoardAssets.white_rook_surface = load_image(piece_path + "Rook_White.png")
+
+		ChessBoardAssets.black_knight_surface = load_image(piece_path + "Knight_Black.png")
+		ChessBoardAssets.white_knight_surface = load_image(piece_path + "Knight_White.png")
+
 		ChessBoardAssets.white_tile_surface = load_image(tile_path + "Tile_White.png")
 		ChessBoardAssets.black_tile_surface = load_image(tile_path + "Tile_Black.png")
 

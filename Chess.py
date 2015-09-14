@@ -29,9 +29,8 @@ class ChessGame:
 
         self.captured_pieces = []
         
-        for i in range(8):
-            self.black_pieces.append(Pawn("black", i, 6, tile_size, tile_size, ChessBoardAssets.black_pawn_surface))
-            self.white_pieces.append(Pawn("white", i, 1, tile_size, tile_size, ChessBoardAssets.white_pawn_surface))
+        self.fill_board()
+
 
         self.turn = TURN.PLAYER_1
         self.moves = []
@@ -117,7 +116,7 @@ class ChessGame:
             if Options.highlight_selected:
                 screen.blit(ChessBoardAssets.selected_piece, (self.player1.selected_piece.board_x * tile_size + offset[0], self.player1.selected_piece.board_y * tile_size + offset[1]))# draw selected
 
-            for pos in self.player1.selected_piece.get_possible_moves(self.game_board.board): # draw possible captures & moves
+            for pos in self.player1.selected_piece.possible_moves: # draw possible captures & moves
                 if Options.highlight_capturable and self.game_board.board[pos[0]][pos[1]].occupying_piece:
                     screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
                 elif Options.highlight_possible_moves:
@@ -127,12 +126,31 @@ class ChessGame:
             if Options.highlight_selected:
                 screen.blit(ChessBoardAssets.selected_piece, (self.player2.selected_piece.board_x * tile_size + offset[0], self.player2.selected_piece.board_y * tile_size + offset[1]))
 
-            for pos in self.player2.selected_piece.get_possible_moves(self.game_board.board):
+            for pos in self.player2.selected_piece.possible_moves:
                 if Options.highlight_capturable and self.game_board.board[pos[0]][pos[1]].occupying_piece:
                     screen.blit(ChessBoardAssets.possible_capture, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible captures
                 elif Options.highlight_possible_moves:
                     screen.blit(ChessBoardAssets.possible_move, (pos[0] * tile_size + offset[0], pos[1] * tile_size + offset[1])) # draw possible moves
 
+
+    def fill_board(self):
+        for i in range(8):
+            self.black_pieces.append(Pawn("black", i, 6, tile_size, tile_size, ChessBoardAssets.black_pawn_surface))
+            self.white_pieces.append(Pawn("white", i, 1, tile_size, tile_size, ChessBoardAssets.white_pawn_surface))
+
+        # rooks
+        self.black_pieces.append(Rook("black", 7, 7, tile_size, tile_size, ChessBoardAssets.black_rook_surface))
+        self.black_pieces.append(Rook("black", 0, 7, tile_size, tile_size, ChessBoardAssets.black_rook_surface))
+
+        self.white_pieces.append(Rook("white", 7, 0, tile_size, tile_size, ChessBoardAssets.white_rook_surface))
+        self.white_pieces.append(Rook("white", 0, 0, tile_size, tile_size, ChessBoardAssets.white_rook_surface))
+
+        # knights
+        self.black_pieces.append(Knight("black", 6, 7, tile_size, tile_size, ChessBoardAssets.black_knight_surface))
+        self.black_pieces.append(Knight("black", 1, 7, tile_size, tile_size, ChessBoardAssets.black_knight_surface))
+
+        self.white_pieces.append(Knight("white", 6, 0, tile_size, tile_size, ChessBoardAssets.white_knight_surface))
+        self.white_pieces.append(Knight("white", 1, 0, tile_size, tile_size, ChessBoardAssets.white_knight_surface))
 
     def keyDown(self, key):
         pass

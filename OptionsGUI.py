@@ -21,7 +21,7 @@ class OptionsGUI():
         self.buttons["highlight_possible_moves"] = Button("highlight_possible_moves", self.decision, "hl_poss", (100, 355, 360, 50), OptionsAssets.button_small_surface, (), "small")
         self.buttons["show_captured_pieces"] = Button("show_captured_pieces", self.decision, "show_cap", (100, 420, 360, 50), OptionsAssets.button_small_surface, (), "small")
 
-        self.buttons["back"] = Button("SAVE & BACK", self.decision, "back", (425, 520, 360, 50), OptionsAssets.button_small_surface, (), "small")
+        self.buttons["back"] = Button("SAVE & BACK", self.decision, "save+back", (425, 520, 360, 50), OptionsAssets.button_small_surface, (), "small")
         self.buttons["cancel"] = Button("CANCEL", self.decision, "cancel", (25, 520, 360, 50), OptionsAssets.button_small_surface, (), "small")
 
 
@@ -41,7 +41,7 @@ class OptionsGUI():
             if self.decision.value == "options":
                 OptionsGUI()
 
-            if self.decision.value == "back":
+            if self.decision.value == "save+back":
                 Options.save_current_options()
                 self.running = False
 

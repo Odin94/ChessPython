@@ -36,7 +36,6 @@ class Options():
         Options.show_captured_pieces = config['VISUALS']['show_captured_pieces'] == 'True'
 
 
-
     def save_current_options():
         config = configparser.ConfigParser()
 
@@ -62,7 +61,7 @@ class Options():
                              'highlight_selected' : hl_sel,
                              'highlight_capturable' : hl_cap,
                              'highlight_possible_moves' : hl_poss,
-                             'show_captured_pieces:' : show_cap}
+                             'show_captured_pieces' : show_cap}
 
         with open("Options/options.txt", 'w') as options_file:
             config.write(options_file)
