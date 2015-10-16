@@ -18,6 +18,8 @@ class Piece():
 
         self.possible_moves = []
 
+        self.move_history = []
+
     def draw(self, xoffset = 0): # xoffset is used for captured pieces only
         if not self.captured:
             screen.blit(self.surface, (offset[0] + self.board_x*self.w, offset[1] + self.board_y*self.h))
@@ -116,7 +118,7 @@ class Rook(Piece):
                     break
 
         # move right
-        for i in range(self.board_x+1, len(board[0])-1):
+        for i in range(self.board_x+1, len(board[0])):
             if board[i][self.board_y].occupying_piece and board[i][self.board_y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding
                 break
             moves.append((i, self.board_y))
@@ -162,38 +164,219 @@ class Knight(Piece):
 
         self.possible_moves = moves
 
-        # # jump 2 down, one right
-        # try:
-        #     if not board[self.board_x + 1][self.board_y + 2].occupying_piece.team_color == self.team_color: # if not occupied by own unit, add move
-        #         moves.append((self.board_x + 1, self.board_y + 2))
-        # except IndexError as e:
-        #     pass
 
-        # # jump 2 down, one left
-        # try:
-        #     if not board[self.board_x - 1][self.board_y + 2].occupying_piece.team_color == self.team_color: # if not occupied by own unit, add move
-        #         moves.append((self.board_x - 1, self.board_y + 2))
-        # except IndexError as e:
-        #     pass
+class Bishop(Piece):
+    def __init__(self, team_color, board_x, board_y, w, h, surface): #x & y are Chessboard coordinates here!
+        super().__init__(team_color, board_x, board_y, w, h, surface)
 
-        # # jump 2 up, one right
-        # try:
-        #     if not board[self.board_x + 1][self.board_y - 2].occupying_piece.team_color == self.team_color: # if not occupied by own unit, add move
-        #         moves.append((self.board_x + 1, self.board_y - 2))
-        # except IndexError as e:
-        #     pass
+    def update_possible_moves(self, board):
+        print(str(self.board_x) + " / " + str(self.board_y))
+        moves = []
 
-        # # jump 2 up, one left
-        # try:
-        #     if not board[self.board_x - 1][self.board_y - 2].occupying_piece.team_color == self.team_color: # if not occupied by own unit, add move
-        #         moves.append((self.board_x - 1, self.board_y - 2))
-        # except IndexError as e:
-        #     pass
+        # bottom left
+        for x, y in zip(reversed(range(self.board_x)), range(self.board_y+1, len(board[0]))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        # bottom right
+        for x, y in zip(range(self.board_x+1, len(board)), range(self.board_y+1, len(board[0]))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        # top left
+        for x, y in zip(reversed(range(self.board_x)), reversed(range(self.board_y))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        # top right
+        for x, y in zip(range(self.board_x+1, len(board)), reversed(range(self.board_y))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        self.possible_moves = moves
 
 
-        # # jump 2 right, one up
-        # try:
-        #     if not board[self.board_x + 1][self.board_y + 1].occupying_piece.team_color == self.team_color: # if not occupied by own unit, add move
-        #         moves.append((self.board_x + 1, self.board_y + 1))
-        # except IndexError as e:
-        #     pass
+class Queen(Piece):
+    def __init__(self, team_color, board_x, board_y, w, h, surface): #x & y are Chessboard coordinates here!
+        super().__init__(team_color, board_x, board_y, w, h, surface)
+
+    def update_possible_moves(self, board):
+        print(str(self.board_x) + " / " + str(self.board_y))
+        moves = []
+
+        # move down
+        if not self.board_y == 7:
+            for i in range(self.board_y+1, len(board[0])):
+                if board[self.board_x][i].occupying_piece and board[self.board_x][i].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding
+                    break
+                moves.append((self.board_x, i))
+
+                if board[self.board_x][i].occupying_piece and board[self.board_x][i].occupying_piece.team_color != self.team_color: # if enemy piece is in the way, stop adding after this piece
+                    break
+
+        # move up
+        if not self.board_y == 0:
+            for i in reversed(range(self.board_y)): # add tiles above the rook
+                print("this is",i)
+                if board[self.board_x][i].occupying_piece and board[self.board_x][i].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding
+                    break
+                moves.append((self.board_x, i))
+
+                if board[self.board_x][i].occupying_piece and board[self.board_x][i].occupying_piece.team_color != self.team_color: # if enemy piece is in the way, stop adding after this piece
+                    break
+
+        # move right
+        for i in range(self.board_x+1, len(board)):
+            if board[i][self.board_y].occupying_piece and board[i][self.board_y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding
+                break
+            moves.append((i, self.board_y))
+
+            if board[i][self.board_y].occupying_piece and board[i][self.board_y].occupying_piece.team_color != self.team_color: # if enemy piece is in the way, stop adding after this piece
+                break
+
+        # move left
+        if not self.board_x == 0:
+            for i in reversed(range(self.board_x)): # add tiles left of the rook
+                print(i)
+                if board[i][self.board_y].occupying_piece and board[i][self.board_y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding
+                    break
+                moves.append((i, self.board_y))
+
+                if board[i][self.board_y].occupying_piece and board[i][self.board_y].occupying_piece.team_color != self.team_color: # if enemy piece is in the way, stop adding after this piece
+                    break
+
+
+        # diagonal movement
+
+        # bottom left
+        for x, y in zip(reversed(range(self.board_x)), range(self.board_y+1, len(board[0]))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        # bottom right
+        for x, y in zip(range(self.board_x+1, len(board)), range(self.board_y+1, len(board[0]))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        # top left
+        for x, y in zip(reversed(range(self.board_x)), reversed(range(self.board_y))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        # top right
+        for x, y in zip(range(self.board_x+1, len(board)), reversed(range(self.board_y))):
+            try:
+                if board[x][y].occupying_piece:
+                    if not board[x][y].occupying_piece.team_color == self.team_color: # if own piece is in the way, stop adding. If enemy piece is in the way, add it and then stop adding
+                        moves.append((x, y))
+                    break
+                moves.append((x, y))
+            except IndexError as e:
+                print(e)
+                pass
+
+        self.possible_moves = moves
+
+
+class King(Piece):
+    def __init__(self, team_color, board_x, board_y, w, h, surface): #x & y are Chessboard coordinates here!
+        super().__init__(team_color, board_x, board_y, w, h, surface)
+
+    def update_possible_moves(self, board):
+        print(str(self.board_x) + " / " + str(self.board_y))
+        moves = []
+
+        for x, y in ((1, 1), (1, -1), (-1, 1), (-1, -1), (1, 0), (-1, 0), (0, 1), (0, -1)):
+            try:
+                if self.board_x + x  < 0 or self.board_y + y < 0: # python accepts negative indices which is not intended behaviour in this case.
+                    raise IndexError("negative list indices are considered out of range")
+
+                print(self.board_x + x, self.board_y + y)
+                if (not board[self.board_x + x][self.board_y + y].occupying_piece) or (not board[self.board_x + x][self.board_y + y].occupying_piece.team_color == self.team_color): # if empty or not occupied by own unit, add move
+                    moves.append((self.board_x + x, self.board_y + y))
+            except (IndexError, AttributeError) as e:
+                pass
+
+        # castling
+        
+        if not self.move_history: # King must not have moved yet
+            try:
+                if not board[0][self.board_y].occupying_piece.move_history: # rook must not have moved yet
+                    blocked = False
+                    for x in range(1, self.board_x):
+                        if board[x][self.board_y].occupying_piece:
+                            blocked = True
+                            break
+                        #TODO: check if king is in check or if any of the positions between rook and king are under attack
+                    if not blocked:
+                        moves.append((2, self.board_y, "castling"))
+            except AttributeError as e:
+                print(e)
+
+            try:
+                if not board[7][self.board_y].occupying_piece.move_history: # rook must not have moved yet
+                    blocked = False
+                    for x in range(self.board_x+1, 7):
+                        if board[x][self.board_y].occupying_piece:
+                            blocked = True
+                            break
+                        #TODO: check if king is in check or if any of the positions between rook and king are under attack
+                    if not blocked:
+                        moves.append((6, self.board_y, "castling"))
+            except AttributeError as e:
+                print(e)
+
+        
+
+
+
+        self.possible_moves = moves

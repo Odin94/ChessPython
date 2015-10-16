@@ -22,12 +22,16 @@ class MenueAssets:
 
 	button_surface = None
 	background_surface = None
+	button_hover_animation_surface = None
+	button_pressed_surface = None
 
 	def load_assets():
 		menue_path = "Assets/"+style+"/Menue/"
 
 		MenueAssets.button_surface = load_image(menue_path + "button.png")
+		MenueAssets.button_hover_animation_surface = load_image(menue_path + "ButtonMouseOver.png")
 		MenueAssets.background_surface = load_image(menue_path + "background.png")
+		MenueAssets.button_pressed_surface = load_image(menue_path + "button_pressed.png")
 
 
 class LobbyAssets:
@@ -67,6 +71,9 @@ class ChessBoardAssets:
 	black_pawn_surface = None
 	white_pawn_surface = None
 	board_surface = None
+	black_rook_surface = None
+	white_rook_surface = None
+	#TODO: define other surfaces
 
 	def load_assets():
 		piece_path = "Assets/"+style+"/Pieces/"
@@ -78,8 +85,18 @@ class ChessBoardAssets:
 		ChessBoardAssets.black_rook_surface = load_image(piece_path + "Rook_Black.png")
 		ChessBoardAssets.white_rook_surface = load_image(piece_path + "Rook_White.png")
 
+		ChessBoardAssets.black_bishop_surface = load_image(piece_path + "Bishop_Black.png")
+		ChessBoardAssets.white_bishop_surface = load_image(piece_path + "Bishop_White.png")
+
 		ChessBoardAssets.black_knight_surface = load_image(piece_path + "Knight_Black.png")
 		ChessBoardAssets.white_knight_surface = load_image(piece_path + "Knight_White.png")
+
+		ChessBoardAssets.black_queen_surface = load_image(piece_path + "Queen_Black.png")
+		ChessBoardAssets.white_queen_surface = load_image(piece_path + "Queen_White.png")
+
+		ChessBoardAssets.black_king_surface = load_image(piece_path + "King_Black.png")
+		ChessBoardAssets.white_king_surface = load_image(piece_path + "King_White.png")
+
 
 		ChessBoardAssets.white_tile_surface = load_image(tile_path + "Tile_White.png")
 		ChessBoardAssets.black_tile_surface = load_image(tile_path + "Tile_Black.png")

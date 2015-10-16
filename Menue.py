@@ -21,9 +21,9 @@ class Menue():
 
         self.decision = Deferred("")
         self.buttons = {}
-        self.buttons["play"] = Button("PLAY", self.decision, "lobby", (100, 225, 292, 120), MenueAssets.button_surface)
-        self.buttons["options"] = Button("OPTIONS", self.decision, "options", (100, 350, 292, 120), MenueAssets.button_surface)
-        self.buttons["quit"] = Button("QUIT", self.decision, "quit", (100, 475, 292, 120), MenueAssets.button_surface)
+        self.buttons["play"] = Button("PLAY", self.decision, "lobby", (100, 225, 292, 120), MenueAssets.button_surface, MenueAssets.button_hover_animation_surface, MenueAssets.button_pressed_surface)
+        self.buttons["options"] = Button("OPTIONS", self.decision, "options", (100, 350, 292, 120), MenueAssets.button_surface, MenueAssets.button_hover_animation_surface, MenueAssets.button_pressed_surface)
+        self.buttons["quit"] = Button("QUIT", self.decision, "quit", (100, 475, 292, 120), MenueAssets.button_surface, MenueAssets.button_hover_animation_surface, MenueAssets.button_pressed_surface)
 
 
         
@@ -55,10 +55,21 @@ class Menue():
                     if self.buttons[btn].mouse_over_button(event.pos):
                         self.buttons[btn].on_click()
 
-            # elif event.type == MOUSEMOTION:
-            #     controls.mouse_motion(event.buttons, event.pos, event.rel)
+            elif event.type == MOUSEBUTTONDOWN:
+                for btn in self.buttons:
+                    if self.buttons[btn].mouse_over_button(event.pos):
+                        self.buttons[btn].on_mouse_down()
+
+            elif event.type == MOUSEMOTION:
+                for btn in self.buttons:
+                    if self.buttons[btn].mouse_over_button(event.pos):
+                        self.buttons[btn].on_hover()
+                    else:
+                        self.buttons[btn].on_hover_off()
 
     def update(self):
+        for btn in self.buttons:
+            self.buttons[btn].update()
         self.handle_events()
         self.draw()
 

@@ -145,12 +145,27 @@ class ChessGame:
         self.white_pieces.append(Rook("white", 7, 0, tile_size, tile_size, ChessBoardAssets.white_rook_surface))
         self.white_pieces.append(Rook("white", 0, 0, tile_size, tile_size, ChessBoardAssets.white_rook_surface))
 
+        # Bishop
+        self.black_pieces.append(Bishop("black", 5, 7, tile_size, tile_size, ChessBoardAssets.black_bishop_surface))
+        self.black_pieces.append(Bishop("black", 2, 7, tile_size, tile_size, ChessBoardAssets.black_bishop_surface))
+
+        self.white_pieces.append(Bishop("white", 5, 0, tile_size, tile_size, ChessBoardAssets.white_bishop_surface))
+        self.white_pieces.append(Bishop("white", 2, 0, tile_size, tile_size, ChessBoardAssets.white_bishop_surface))
+
         # knights
         self.black_pieces.append(Knight("black", 6, 7, tile_size, tile_size, ChessBoardAssets.black_knight_surface))
         self.black_pieces.append(Knight("black", 1, 7, tile_size, tile_size, ChessBoardAssets.black_knight_surface))
 
         self.white_pieces.append(Knight("white", 6, 0, tile_size, tile_size, ChessBoardAssets.white_knight_surface))
         self.white_pieces.append(Knight("white", 1, 0, tile_size, tile_size, ChessBoardAssets.white_knight_surface))
+
+        # Queens
+        self.black_pieces.append(Queen("black", 3, 7, tile_size, tile_size, ChessBoardAssets.black_queen_surface))
+        self.white_pieces.append(Queen("white", 3, 0, tile_size, tile_size, ChessBoardAssets.white_queen_surface))
+
+        # Kings
+        self.black_pieces.append(King("black", 4, 7, tile_size, tile_size, ChessBoardAssets.black_king_surface))
+        self.white_pieces.append(King("white", 4, 0, tile_size, tile_size, ChessBoardAssets.white_king_surface))
 
     def keyDown(self, key):
         pass

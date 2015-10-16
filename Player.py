@@ -1,7 +1,7 @@
 import pygame, sys
 from pygame.locals import *
 
-from Move import Move
+from Move import Move, Castling
 from Graphics import ChessBoardAssets, screen, render_text, tile_size
 
 
@@ -19,12 +19,25 @@ class Player():
 
     def move(self, mouse_pos):
         try:
+            found_move = False
             new_pos = self.game_board.get_tile_below_mouse(mouse_pos)
+
             if new_pos in self.selected_piece.possible_moves:
                 move = Move(self.selected_piece, new_pos, self.game_board.board[new_pos[0]][new_pos[1]].occupying_piece)
+                found_move = True
+            
+            elif new_pos + ("castling",) in self.selected_piece.possible_moves:
+                if self.selected_piece.board_x < new_pos[0]:
+                    rook = self.game_board.board[7][self.selected_piece.board_y].occupying_piece
+                else:
+                    rook = self.game_board.board[0][self.selected_piece.board_y].occupying_piece
 
+                move = Castling(self.selected_piece, new_pos[0], rook)
+                found_move = True
+
+
+            if found_move:
                 self.selected_piece = None # prevents accidental moves (and fixes being able to waste a move on captured pieces)
-
                 return move
         
         except (ValueError, AttributeError):
